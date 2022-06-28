@@ -17,6 +17,6 @@
   },
   "scripts": {
     "start": "node api/index.js",
-    "build": "npm install"
+    "build": "echo built"
   }
 }
