@@ -16,6 +16,6 @@
     "puppeteer-core": "^7.0.0"
   },
   "scripts": {
-    "start": "node web.js"
+    "start": "node api/index.js"
   }
 }
