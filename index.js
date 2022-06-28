@@ -25,7 +25,7 @@ app.get('*', async function(req, res) {
   d2 = new Date()
   console.log('total time', d2-d1)
   */
-  html = "Express on Vercel"
+  html = "Express on Vercel: " + req.url
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
   res.end(html)
