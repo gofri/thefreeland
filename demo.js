@@ -28,19 +28,13 @@ async function simpleScroll(page){
 	})
 }
 
-(async () => {
-  // Take the urls from the command line
-  var args = process.argv.slice(2);
-
+async function getPage(url) {
   try {
     // launch a new headless browser
     const browser = await puppeteer.launch();
 
-    // loop over the urls
-    for (let i = 0; i < args.length; i++) {
-      
       // check for https for safety!
-      if (args[i].includes("https://")) {
+      if (url.includes("https://")) {
         const page = await browser.newPage();
 
         // set the viewport size
@@ -84,7 +78,11 @@ async function simpleScroll(page){
 		}
 	})
 	*/
-      await page.goto(args[i], {waitUntil: 'load'});
+
+      var d1 = new Date()
+      await page.goto(url, {waitUntil: 'load'});
+      var d2 = new Date()
+      console.log("time diff for url: " + url, d2 - d1)
 	  /*
 	await page.evaluate(() => {
 		var scripts = document.querySelectorAll("script")
@@ -114,15 +112,17 @@ async function simpleScroll(page){
 	})*/
 	await page.evaluate(() => {
 		var header = document.querySelector("h2#commentsSection")
-		var section = header.parentElement
-		// section.remove()
-		section.hidden = true
+		if (header) {
+			var section = header.parentElement
+			// section.remove()
+			section.hidden = true
+		}
 	})
 	await autoScroll(page);
 	// await page.waitForTimeout(2000)
 	
 	await page.evaluate(() => {
-		var site = 'https://haaretz.co.il' // TODO replace to free land
+		var site = '' // TODO replace to free land
 		var links = document.querySelectorAll('[data-test="link"]')
 		for (var i = 0; i < links.length; i++) {
 			var link = links[i]
@@ -152,24 +152,24 @@ async function simpleScroll(page){
 	// const pdfBuffer = await page.pdf({ path: path + '.pdf' });
 	var h = await page.content();
 	      if(typeof String.prototype.replaceAll === "undefined") {
-    String.prototype.replaceAll = function(match, replace) {
-       return this.replace(new RegExp(match, 'g'), () => replace);
-    }
-}
+		    String.prototype.replaceAll = function(match, replace) {
+		       return this.replace(new RegExp(match, 'g'), () => replace);
+		    }
+		}
 	// var s = h.replaceAll('"/_next/static', '"https://haaretz.co.il/_next/static')
 	var s = h
-	console.log(s)
+	return s
 
         // done!
         // console.log(`✅ Screenshot of ${args[i]} saved!`);
       } else {
-        console.error(`❌ Could not save screenshot of ${args[i]}!`);
+        console.error(`❌ Could not save screenshot of ${url}`);
       }
-    }
 
     // close the browser
     await browser.close();
   } catch (error) {
     console.log(error);
   }
-})();
+}
+module.exports = getPage
