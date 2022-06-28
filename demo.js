@@ -28,8 +28,11 @@ async function simpleScroll(page){
 	})
 }
 
+const homepage = 'https://www.haaretz.co.il/'
+
 async function getPage(url) {
   try {
+	start = new Date()
     // launch a new headless browser
     const browser = await puppeteer.launch();
 
@@ -39,8 +42,8 @@ async function getPage(url) {
 
         // set the viewport size
         await page.setViewport({
-          width: 1920,
-          height: 1080,
+          width: 390,
+          height: 844,
           deviceScaleFactor: 1,
         });
 
@@ -51,11 +54,13 @@ async function getPage(url) {
 	*/
 	      await page.setExtraHTTPHeaders({
 		'ismobileapp': 'true',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36',
+        // 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36',
+		'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
         'upgrade-insecure-requests': '1',
         'accept': '*',
         'accept-encoding': 'gzip, deflate, br',
-        'accept-language': 'en-US,en;q=0.9,en;q=0.8'
+        'accept-language': 'en-US,en;q=0.9,en;q=0.8',
+		'z-backend-name': '0FXkDyJiycX8yd8K3dw1vx--F_react_www_htz',
     })
 
         // tell the page to visit the url
@@ -79,10 +84,11 @@ async function getPage(url) {
 	})
 	*/
 
-      var d1 = new Date()
-      await page.goto(url, {waitUntil: 'load'});
-      var d2 = new Date()
-      console.log("time diff for url: " + url, d2 - d1)
+	console.log("go to " + url)
+    var d1 = new Date()
+    await page.goto(url, {waitUntil: 'domcontentloaded'});
+    var d2 = new Date()
+    console.log("time diff for url: " + url, d2 - d1)
 	  /*
 	await page.evaluate(() => {
 		var scripts = document.querySelectorAll("script")
@@ -110,66 +116,73 @@ async function getPage(url) {
 	await page.evaluate(() => {
 		document.querySelector("h2#commentsSection").scrollIntoView({behavior: "smooth"})
 	})*/
-	await page.evaluate(() => {
-		var header = document.querySelector("h2#commentsSection")
-		if (header) {
-			var section = header.parentElement
-			// section.remove()
-			section.hidden = true
-		}
-	})
-	await autoScroll(page);
-	// await page.waitForTimeout(2000)
+	if (url != homepage) {
+		await page.evaluate(() => {
+			var header = document.querySelector("h2#commentsSection")
+			if (header) {
+				var section = header.parentElement
+				// section.remove()
+				section.hidden = true
+			}
+		})
+		await autoScroll(page);
 	
-	await page.evaluate(() => {
-		var site = '' // TODO replace to free land
-		var links = document.querySelectorAll('[data-test="link"]')
-		for (var i = 0; i < links.length; i++) {
-			var link = links[i]
-			var href = link.getAttribute('href')
-			if (href && href.startsWith('/')) {
-				links[i].setAttribute('href', site + href)
+	// await page.waitForTimeout(2000)
+		await page.evaluate(() => {
+			var site = '' // TODO replace to free land
+			var links = document.querySelectorAll('[data-test="link"]')
+			for (var i = 0; i < links.length; i++) {
+				var link = links[i]
+				var href = link.getAttribute('href')
+				if (href && href.startsWith('/')) {
+					links[i].setAttribute('href', site + href)
+				}
 			}
-		}
-
-		var links = document.querySelectorAll('[data-test="articleLink"]')
-		for (var i = 0; i < links.length; i++) {
-			var link = links[i]
-			var href = link.getAttribute('href')
-			if (href && href.startsWith('/')) {
-				links[i].setAttribute('href', site + href)
+			
+			var links = document.querySelectorAll('[data-test="articleLink"]')
+			for (var i = 0; i < links.length; i++) {
+				var link = links[i]
+				var href = link.getAttribute('href')
+				if (href && href.startsWith('/')) {
+					links[i].setAttribute('href', site + href)
+				}
 			}
-		}
-		
-	})
+		})
+	}
 
-        // take a screenshot and save it in the screenshots directory
+	// take a screenshot and save it in the screenshots directory
 	// var path = `./screenshots/${args[i].replace("https://", "")}.png`
 	// path = path.replaceAll("/", "_")
-	var path = "./screenshots/new.png"
+	// var path = "./screenshots/new.png"
 	// await page.screenshot({ path: path  });
 	// await page.screenshot({ path: path  });
 	// const pdfBuffer = await page.pdf({ path: path + '.pdf' });
+	_d1 = new Date()
+	console.log("time before content: " + url, _d1 - d2)
 	var h = await page.content();
-	      if(typeof String.prototype.replaceAll === "undefined") {
-		    String.prototype.replaceAll = function(match, replace) {
-		       return this.replace(new RegExp(match, 'g'), () => replace);
-		    }
-		}
-	// var s = h.replaceAll('"/_next/static', '"https://haaretz.co.il/_next/static')
-	var s = h
-	return s
-
-        // done!
-        // console.log(`✅ Screenshot of ${args[i]} saved!`);
-      } else {
-        console.error(`❌ Could not save screenshot of ${url}`);
-      }
+	_d2 = new Date()
+	console.log('time for content', _d2-_d1)
 
     // close the browser
-    await browser.close();
-  } catch (error) {
-    console.log(error);
-  }
+    browser.close();
+
+	if(typeof String.prototype.replaceAll === "undefined") {
+		String.prototype.replaceAll = function(match, replace) {
+			return this.replace(new RegExp(match, 'g'), () => replace);
+		}
+	}
+	// var s = h.replaceAll('"/_next/static', '"https://haaretz.co.il/_next/static')
+	console.log('time in foo', new Date() - start)
+	return h
+        // done!
+        // console.log(`✅ Screenshot of ${args[i]} saved!`);
+	} else {
+		console.error(`❌ Could not save screenshot of ${url}`);
+		return "<h1>load failed!</h1>";
+	}
+	
+} catch (error) {
+	console.log(error);
+}
 }
 module.exports = getPage

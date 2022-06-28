@@ -10,12 +10,19 @@ app.get('/', (req, res) => {
 */
 
 app.get('*', async function(req, res) {
-  if (req.url.endsWith(".js") || req.url.endsWith(".json") || req.url.endsWith(".ico")) {
+  if (req.url.endsWith(".js") || 
+    req.url.endsWith(".json") || 
+    req.url.endsWith(".ico") ||
+    req.url.endsWith(".woff") || 
+    req.url.endsWith(".woff2")) {
 	  res.send("")
 	  return
   }
   url = "https://www.haaretz.co.il" + req.url
+  d1 = new Date()
   html = await foo(url)
+  d2 = new Date()
+  console.log('total time', d2-d1)
   res.send(html)
 });
 
