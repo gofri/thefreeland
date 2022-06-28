@@ -1,9 +1,9 @@
 {
-  "name": "puppeteer-demo",
+  "name": "thefreeland",
   "version": "1.0.0",
   "description": "A small project to demo how to use Puppeteer to take screenshots of a browser window",
   "main": "index.js",
-  "author": "whitep4nth3r",
+  "author": "gofri",
   "license": "MIT",
   "private": false,
   "engines": {
@@ -16,6 +16,7 @@
     "puppeteer-core": "^7.0.0"
   },
   "scripts": {
-    "start": "node api/index.js"
+    "start": "node api/index.js",
+    "build": ""
   }
 }
