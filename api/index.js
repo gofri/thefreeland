@@ -25,7 +25,7 @@ app.get('*', async function(req, res) {
   console.log('total time', d2-d1)
   res.setHeader('Content-Type', 'text/html');
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
-  res.send(html)
+  res.end(html)
 });
 
 app.listen(port, () => {
