@@ -23,6 +23,8 @@ app.get('*', async function(req, res) {
   html = await foo(url)
   d2 = new Date()
   console.log('total time', d2-d1)
+  res.setHeader('Content-Type', 'text/html');
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate');
   res.send(html)
 });
 
